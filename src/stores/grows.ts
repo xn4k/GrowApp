@@ -1,58 +1,77 @@
-import {defineStore} from "pinia";
-
+// src/stores/grows.ts
+import { defineStore } from 'pinia'
+import { db } from '@/lib/firebase'
+import {
+  collection, doc, getDocs, addDoc, updateDoc, deleteDoc,
+  query, orderBy, serverTimestamp
+} from 'firebase/firestore'
+import { useAuthStore } from './auth'
 
 export type GrowStatus = 'planned' | 'running' | 'harvested' | 'aborted'
 
-export interface Planned {
+export interface Grow {
   id: string
   name: string
-  startDate: string | ISO
+  startDate: string // ISO
   vegDays: number
   flowerDays: number
   status: GrowStatus
+  createdAt?: any
 }
 
-const LS_KEY = 'growapp.grows.v1'
+type GrowDoc = Omit<Grow,'id'>
 
 export const useGrowsStore = defineStore('grows', {
   state: () => ({
     grows: [] as Grow[],
+    loading: false,
   }),
-
   actions: {
-    load() {
+    colRef() {
+      const uid = useAuthStore().user?.uid
+      if (!uid) throw new Error('not-authenticated')
+      return collection(db, 'users', uid, 'grows')
+    },
+
+    async load() {
+      this.loading = true
       try {
-        const raw = localStorage.getItem(LS_KEY)
-        this.grows = raw ? JSON.parse(raw) as Grow [] : []
-      } catch {
-        this.grows = []
+        const q = query(this.colRef(), orderBy('createdAt','desc'))
+        const snap = await getDocs(q)
+        this.grows = snap.docs.map(d => ({ id: d.id, ...(d.data() as GrowDoc) }))
+      } finally {
+        this.loading = false
       }
     },
 
-    persist() {
-      localStorage.setItem(LS_KEY, JSON.stringify(this.grows))
+    async add(g: Omit<Grow, 'id'|'createdAt'>) {
+      const payload: GrowDoc = { ...g, createdAt: serverTimestamp() as any }
+      const ref = await addDoc(this.colRef(), payload)
+      // clientseitig direkt anzeigen
+      this.grows.unshift({ id: ref.id, ...g })
     },
-    // Neues Grow anlegen status optional standard ist planned
-    add(g: Omit<Grow, 'id'|'status'> & { status?: GrowStatus }) {
-      const item: Grow = {
-        id: crypto.randomUUID(),
-        status: g.status ?? 'planned',
-        ...g,
-      }
-      this.grows.unshift(item)
-      this.persist()
-    },
-    // Status eines Grows aktualisieren
-    updateStatus(id: string, status: GrowStatus) {
+
+    async updateStatus(id: string, status: GrowStatus) {
+      const ref = doc(this.colRef(), id)
+      await updateDoc(ref, { status })
       const i = this.grows.findIndex(x => x.id === id)
-      if (i !== -1) {
-        this.grows[i].status = status
-        this.persist()
-      }
-  },
-    remove(id: string) {
-    this.grows = this.grows.filter(x => x.id !== id)
-    this.persist()
+      if (i !== -1) this.grows[i].status = status
+    },
+
+    async remove(id: string) {
+      const ref = doc(this.colRef(), id)
+      await deleteDoc(ref)
+      this.grows = this.grows.filter(x => x.id !== id)
+    },
+
+    // Optional: einmalige Migration von LocalStorage -> Firestore
+    async migrateLocalToCloud() {
+      const LS_KEY = 'growapp.grows.v1'
+      const raw = localStorage.getItem(LS_KEY)
+      if (!raw) return
+      const arr = JSON.parse(raw) as Omit<Grow,'id'|'createdAt'>[]
+      for (const g of arr) await this.add(g)
+      localStorage.removeItem(LS_KEY)
     },
   },
 })

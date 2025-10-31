@@ -8,6 +8,7 @@
     <input v-model.number="flower" type="number" min="0" placeholder="Blüte-Tage" />
 
     <label>
+      Status
       <select v-model="status">
         <option value="planned">planned</option>
         <option value="running">running</option>
@@ -23,7 +24,11 @@
   <hr />
 
   <ul style="display:grid;gap:.5rem;padding-left:0;list-style:none;">
-    <li v-for="g in store.grows" :key="g.id" style="border:1px solid #ddd;padding:.5rem;border-radius:.5rem;">
+    <li
+      v-for="g in store.grows"
+      :key="g.id"
+      style="border:1px solid #ddd;padding:.5rem;border-radius:.5rem;"
+    >
       <div style="display:flex;justify-content:space-between;gap:1rem;align-items:center;flex-wrap:wrap;">
         <div>
           <div><strong>{{ g.name }}</strong></div>
@@ -38,10 +43,7 @@
           <span style="font-size:.8rem;padding:.15rem .5rem;border:1px solid #ccc;border-radius:999px;">
             {{ g.status }}
           </span>
-          <select
-            :value="g.status"
-            @change="onChangeStatus(g.id, ($event.target as HTMLSelectElement).value)"
-          >
+          <select :value="g.status" @change="onChangeStatus(g.id, ($event.target as HTMLSelectElement).value)">
             <option value="planned">planned</option>
             <option value="running">running</option>
             <option value="harvested">harvested</option>
@@ -55,32 +57,27 @@
   </ul>
 </template>
 
-<style>
-@media (min-width: 1024px) {
-  .planer {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/auth'
+
 import { ref, computed, onMounted } from 'vue'
 import { useGrowsStore, type GrowStatus } from '@/stores/grows'
 import { harvestDateISO } from '@/utils/grow'
 
 const store = useGrowsStore()
 
-// Formular-State
 const name   = ref('')
-const start  = ref<string>(new Date().toISOString().slice(0,10)) // yyyy-mm-dd für <input type="date">
+const start  = ref<string>(new Date().toISOString().slice(0,10))
 const veg    = ref<number>(0)
 const flower = ref<number>(0)
 const status = ref<GrowStatus>('planned')
 
-// Beim Laden der View, vorhandene Daten aus LocalStorage holen
-onMounted(() => {
-  store.load()
+onMounted(async () => {
+  // eingeloggt? sonst zur Login-Page (falls Route nicht schon geschützt ist)
+  if (!auth.user) return
+  await store.load()
+  // optional: Sobald du das einmal gemacht hast, kann’s raus.
+  // await store.migrateLocalToCloud()
 })
 
 const harvest = computed(() =>
@@ -95,8 +92,6 @@ function addGrow() {
     flowerDays: Number(flower.value) || 0,
     status: status.value,
   })
-
-  // Formular zurücksetzen
   name.value = ''
   veg.value = 0
   flower.value = 0

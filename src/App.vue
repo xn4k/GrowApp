@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import { useAuthStore } from '@/stores/auth'
+const auth = useAuthStore()
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <img alt="Vue logo" class="logo" src="@/assets/helix.svg" width="125" height="125" />
 
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
@@ -13,6 +15,11 @@ import HelloWorld from './components/HelloWorld.vue'
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/planer">Planer</RouterLink>
+        <RouterLink v-if="!auth.user" to="/login">Login</RouterLink>
+        <span v-else>
+      Eingeloggt als {{ auth.user.email }}
+      <button @click="auth.signOut()">Logout</button>
+    </span>
       </nav>
     </div>
   </header>
