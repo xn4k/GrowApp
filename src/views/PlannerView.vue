@@ -1,5 +1,5 @@
 <template>
-  <h1>Grow-Planer</h1>
+  <h1>Grow-Planner</h1>
 
   <form @submit.prevent="addGrow" style="display:grid;gap:.5rem;max-width:420px">
     <input v-model="name" placeholder="Name" required />

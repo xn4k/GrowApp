@@ -10,11 +10,11 @@ const auth = useAuthStore()
     <img alt="Vue logo" class="logo" src="@/assets/helix.svg" width="125" height="125" />
 
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+      <HelloWorld msg="Welcome to your Planer" />
 
       <nav>
         <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/planer">Planer</RouterLink>
+        <RouterLink to="/planner">Planner</RouterLink>
         <RouterLink v-if="!auth.user" to="/login">Login</RouterLink>
         <span v-else>
       Eingeloggt als {{ auth.user.email }}

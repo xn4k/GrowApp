@@ -6,7 +6,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', name: 'home', component: HomeView },
-    { path: '/planer', name: 'planer', component: () => import('@/views/PlanerView.vue'), meta: { requiresAuth: true } },
+    { path: '/planner', name: 'planner', component: () => import('@/views/PlannerView.vue'), meta: { requiresAuth: true } },
     { path: '/strains', name: 'strains', component: () => import('@/views/StrainsView.vue'), meta: { requiresAuth: true } },
     { path: '/login', name: 'login', component: () => import('@/views/LoginView.vue') },
   ],
