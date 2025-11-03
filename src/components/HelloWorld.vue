@@ -8,10 +8,14 @@ defineProps<{
   <div class="greetings">
     <h1 class="blue">{{ msg }}</h1>
     <h3>
-      Lets's track our plants! Built with:
+      Lets's track our plants! My name is
       <br>
-      <a href="https://vite.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>. What's next?
+      <a href="https://github.com/xn4k" target="_blank" rel="noopener">Mikhail!</a> I built this for my friends
+      <br>
+      using
+      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
+      <br>
+      What's next?
     </h3>
   </div>
 </template>
