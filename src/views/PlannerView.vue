@@ -55,6 +55,14 @@
       </div>
     </li>
   </ul>
+
+  <div class="bg-gray-100 p-6 rounded-xl shadow flex flex-col items-center justify-center">
+    <h2 class="text-xl font-semibold mb-2">Statistik</h2>
+    <p class="text-sm text-gray-600">Geplante Grows: {{ store.grows.length }}</p>
+    <p class="text-sm text-gray-600">Aktiv: {{ store.grows.filter(g => g.status === 'running').length }}</p>
+    <p class="text-sm text-gray-600">Abgeschlossen: {{ store.grows.filter(g => g.status === 'harvested').length }}</p>
+  </div>
+
 </template>
 
 <script setup lang="ts">
