@@ -1,7 +1,21 @@
 <template>
   <h1>Grow-Planner</h1>
-
-  <form @submit.prevent="addGrow" style="display:grid;gap:.5rem;max-width:420px">
+  <div>
+    <p>Meine Freunde</p>
+    <p>Alles was hier passiert ist ein Test</p>
+    <p>Ich überlege einen chat hier hizufügen</p>
+    <p>Oder news Feed</p>
+    <p>Linke seite2</p>
+    <p>Linke seite3</p>
+  </div>
+  <div>
+  <p>Test Rechte Seite</p>
+    <p>rechte seite1</p>
+    <p>rechte seite2</p>
+    <p>rechte seite3</p>
+    <p>rechte seite4</p>
+  </div>
+  <form @submit.prevent="addGrow" style="gap:.5rem;max-width:420px">
     <input v-model="name" placeholder="Name" required />
     <input v-model="start" type="date" required />
     <input v-model.number="veg" type="number" min="0" placeholder="Veg-Tage" />
@@ -18,10 +32,16 @@
     </label>
 
     <div>Erntedatum: <strong>{{ harvest }}</strong></div>
+    <div class="bg-gray-100 p-6 rounded-xl shadow flex flex-col items-center justify-center">
+      <h2 class="text-xl font-semibold mb-2">Statistik</h2>
+      <p class="text-sm text-gray-600">Geplante Grows: {{ store.grows.length }}</p>
+      <p class="text-sm text-gray-600">Aktiv: {{ store.grows.filter(g => g.status === 'running').length }}</p>
+      <p class="text-sm text-gray-600">Abgeschlossen: {{ store.grows.filter(g => g.status === 'harvested').length }}</p>
+    </div>
     <button type="submit">Speichern</button>
   </form>
 
-  <hr />
+
 
   <ul style="display:grid;gap:.5rem;padding-left:0;list-style:none;">
     <li
@@ -29,39 +49,29 @@
       :key="g.id"
       style="border:1px solid #ddd;padding:.5rem;border-radius:.5rem;"
     >
-      <div style="display:flex;justify-content:space-between;gap:1rem;align-items:center;flex-wrap:wrap;">
-        <div>
-          <div><strong>{{ g.name }}</strong></div>
-          <div style="font-size:.9rem;opacity:.8">
-            Start: {{ g.startDate.slice(0,10) }} ·
-            Veg: {{ g.vegDays }} · Flower: {{ g.flowerDays }} ·
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold">{{ g.name }}</div>
+          <div class="text-xs opacity-75 truncate">
+            Start: {{ g.startDate.slice(0,10) }} · Veg: {{ g.vegDays }} · Flower: {{ g.flowerDays }} ·
             Harvest: {{ computeHarvest(g.startDate, g.vegDays, g.flowerDays).slice(0,10) }}
           </div>
         </div>
-
-        <div style="display:flex;align-items:center;gap:.5rem;">
-          <span style="font-size:.8rem;padding:.15rem .5rem;border:1px solid #ccc;border-radius:999px;">
-            {{ g.status }}
-          </span>
-          <select :value="g.status" @change="onChangeStatus(g.id, ($event.target as HTMLSelectElement).value)">
+        <div class="flex items-center gap-2 shrink-0">
+          <span class="text-xs px-2 py-0.5 rounded-full border">{{ g.status }}</span>
+          <select :value="g.status" @change="onChangeStatus(g.id, ($event.target as HTMLSelectElement).value)" class="text-xs max-w-[140px]">
             <option value="planned">planned</option>
             <option value="running">running</option>
             <option value="harvested">harvested</option>
             <option value="aborted">aborted</option>
           </select>
-
-          <button type="button" @click="store.remove(g.id)">Löschen</button>
+          <button type="button" @click="store.remove(g.id)" class="text-red-400 text-xs hover:underline">Löschen</button>
         </div>
       </div>
     </li>
   </ul>
 
-  <div class="bg-gray-100 p-6 rounded-xl shadow flex flex-col items-center justify-center">
-    <h2 class="text-xl font-semibold mb-2">Statistik</h2>
-    <p class="text-sm text-gray-600">Geplante Grows: {{ store.grows.length }}</p>
-    <p class="text-sm text-gray-600">Aktiv: {{ store.grows.filter(g => g.status === 'running').length }}</p>
-    <p class="text-sm text-gray-600">Abgeschlossen: {{ store.grows.filter(g => g.status === 'harvested').length }}</p>
-  </div>
+
 
 </template>
 
