@@ -55,7 +55,10 @@ export const useGrowsStore = defineStore('grows', {
       const ref = doc(this.colRef(), id)
       await updateDoc(ref, { status })
       const i = this.grows.findIndex(x => x.id === id)
-      if (i !== -1) this.grows[i].status = status
+      const grow = this.grows[i]
+      if (grow) {
+        grow.status = status
+      }
     },
 
     async remove(id: string) {

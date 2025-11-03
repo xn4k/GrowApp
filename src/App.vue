@@ -10,7 +10,7 @@ const auth = useAuthStore()
     <img alt="Vue logo" class="logo" src="@/assets/helix.svg" width="125" height="125" />
 
     <div class="wrapper">
-      <HelloWorld msg="Welcome to your Planer" />
+      <HelloWorld msg="Welcome to your Planner" />
 
       <nav>
         <RouterLink to="/">Home</RouterLink>

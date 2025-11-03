@@ -64,6 +64,9 @@ import { ref, computed, onMounted } from 'vue'
 import { useGrowsStore, type GrowStatus } from '@/stores/grows'
 import { harvestDateISO } from '@/utils/grow'
 
+
+const auth = useAuthStore()
+
 const store = useGrowsStore()
 
 const name   = ref('')
