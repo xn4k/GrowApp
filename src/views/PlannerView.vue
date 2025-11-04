@@ -1,44 +1,124 @@
 <template>
   <h1>Grow-Planner</h1>
+
   <div>
-    <p>Meine Freunde</p>
-    <p>Alles was hier passiert ist ein Test</p>
-    <p>Ich überlege einen chat hier hizufügen</p>
-    <p>Oder news Feed</p>
-    <p>Linke seite2</p>
-    <p>Linke seite3</p>
+    <p class="text-sm text-neutral-400 mb-1">Meine Freunde</p>
+    <p class="text-sm text-neutral-400 mb-1">Alles, was hier passiert, ist noch ein Test.</p>
+    <p class="text-sm text-neutral-400 mb-1">Ich überlege, einen kleinen Chat oder News-Feed hinzuzufügen.</p>
+    <p class="text-sm text-neutral-400 mb-1">Vielleicht kommt auch eine Social-Wall oder ein Aktivitätslog dazu.</p>
+    <p> ⚠️ Dieses Feature ist nur ein Prototyp. Feedback willkommen – Änderungen jederzeit möglich.</p>
+    <p>Abgesehen davon dass ich das ganze Layout noch zu ende machen werde damit es nicht wie
+    ein Schwanz aussieht. :=) </p>
   </div>
+
+
   <div>
+    <!-- Small GIF to emphasize "work in progress" -->
+    <img
+      src="https://miro.medium.com/0*asGn9Td3i3o0zQKV"
+      alt="Work in progress"
+      class="rounded-lg w-1/3 mx-auto mb-4 opacity-90"
+      style="width:290px; height:auto; display:block; opacity:0.9"
+
+    />
   <p>Test Rechte Seite</p>
     <p>rechte seite1</p>
     <p>rechte seite2</p>
     <p>rechte seite3</p>
     <p>rechte seite4</p>
   </div>
-  <form @submit.prevent="addGrow" style="gap:.5rem;max-width:420px">
-    <input v-model="name" placeholder="Name" required />
-    <input v-model="start" type="date" required />
-    <input v-model.number="veg" type="number" min="0" placeholder="Veg-Tage" />
-    <input v-model.number="flower" type="number" min="0" placeholder="Blüte-Tage" />
-
-    <label>
-      Status
-      <select v-model="status">
-        <option value="planned">planned</option>
-        <option value="running">running</option>
-        <option value="harvested">harvested</option>
-        <option value="aborted">aborted</option>
-      </select>
-    </label>
-
-    <div>Erntedatum: <strong>{{ harvest }}</strong></div>
-    <div class="bg-gray-100 p-6 rounded-xl shadow flex flex-col items-center justify-center">
-      <h2 class="text-xl font-semibold mb-2">Statistik</h2>
-      <p class="text-sm text-gray-600">Geplante Grows: {{ store.grows.length }}</p>
-      <p class="text-sm text-gray-600">Aktiv: {{ store.grows.filter(g => g.status === 'running').length }}</p>
-      <p class="text-sm text-gray-600">Abgeschlossen: {{ store.grows.filter(g => g.status === 'harvested').length }}</p>
+  <form
+    @submit.prevent="addGrow"
+    class="grid gap-3 max-w-md bg-neutral-900/40 border border-neutral-700 rounded-xl p-5"
+  >
+    <!-- Name -->
+    <div class="flex flex-col">
+      <label for="name" class="text-sm font-medium mb-1 text-neutral-300">Name des Grows</label>
+      <input
+        id="name"
+        v-model="name"
+        placeholder="z. B. Polar Gelato"
+        required
+        class="rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2"
+      />
     </div>
-    <button type="submit">Speichern</button>
+
+    <!-- Startdatum -->
+    <div class="flex flex-col">
+      <label for="start" class="text-sm font-medium mb-1 text-neutral-300">Startdatum</label>
+      <input
+        id="start"
+        v-model="start"
+        type="date"
+        required
+        class="rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2"
+      />
+    </div>
+
+    <!-- Vegetative Phase -->
+    <div class="flex flex-col">
+      <label for="veg" class="text-sm font-medium mb-1 text-neutral-300">Dauer Vegetative Phase (Tage)</label>
+      <input
+        id="veg"
+        v-model.number="veg"
+        type="number"
+        min="0"
+        placeholder="z. B. 21"
+        class="rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2"
+      />
+    </div>
+
+    <!-- Blütephase -->
+    <div class="flex flex-col">
+      <label for="flower" class="text-sm font-medium mb-1 text-neutral-300">Dauer Blütephase (Tage)</label>
+      <input
+        id="flower"
+        v-model.number="flower"
+        type="number"
+        min="0"
+        placeholder="z. B. 56"
+        class="rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2"
+      />
+    </div>
+
+    <!-- Status -->
+    <div class="flex flex-col">
+      <label for="status" class="text-sm font-medium mb-1 text-neutral-300">Status</label>
+      <select
+        id="status"
+        v-model="status"
+        class="rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2"
+      >
+        <option value="planned">Geplant</option>
+        <option value="running">Läuft</option>
+        <option value="harvested">Geerntet</option>
+        <option value="aborted">Abgebrochen</option>
+      </select>
+    </div>
+
+
+    <!-- Erntedatum -->
+    <p class="text-sm text-neutral-400">
+      Voraussichtliches Erntedatum: <strong class="text-neutral-200">{{ harvest }}</strong>
+    </p>
+
+    <!-- Button -->
+    <button
+      type="submit"
+      class="mt-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-md"
+    >
+      Speichern
+    </button>
+
+    <!-- Statistik -->
+    <div class="bg-neutral-800 p-4 rounded-xl border border-neutral-700">
+      <h2 class="text-lg font-semibold mb-2 text-neutral-100">Statistik</h2>
+      <p class="text-sm text-neutral-400">Gesamt: {{ store.grows.length }}</p>
+      <p class="text-sm text-neutral-400">Aktiv: {{ store.grows.filter(g => g.status === 'running').length }}</p>
+      <p class="text-sm text-neutral-400">Abgeschlossen: {{ store.grows.filter(g => g.status === 'harvested').length }}</p>
+    </div>
+
+
   </form>
 
 

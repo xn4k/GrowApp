@@ -17,7 +17,7 @@ const auth = useAuthStore()
         <RouterLink to="/planner">Planner</RouterLink>
         <RouterLink v-if="!auth.user" to="/login">Login</RouterLink>
         <span v-else>
-      Eingeloggt als {{ auth.user.email }}
+      Schön dich zu sehen {{ auth.user.email }}!
       <button @click="auth.signOut()">Logout</button>
     </span>
       </nav>
