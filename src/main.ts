@@ -10,6 +10,6 @@ const app = createApp(App)
 const pinia = createPinia()
 
 app.use(pinia)
-useAuthStore().init()   // Auth-Listener früh starten
+useAuthStore().initOnce()   // Auth-Listener früh starten
 app.use(router)
 app.mount('#app')

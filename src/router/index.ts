@@ -11,24 +11,9 @@ const router = createRouter({
   ],
 })
 
-let authReady: Promise<void> | null = null
-
 router.beforeEach(async to => {
   const auth = useAuthStore()
-
-  if (!auth.ready) {
-    // Warte genau einmal auf den ersten Auth-Callback
-    authReady ||= new Promise<void>(resolve => {
-      const int = setInterval(() => {
-        if (auth.ready) {
-          clearInterval(int)
-          resolve()
-        }
-      }, 20)
-    })
-    await authReady
-  }
-
+  await auth.initOnce()
   if (to.meta.requiresAuth && !auth.user) {
     return { name: 'login', query: { next: to.fullPath } }
   }

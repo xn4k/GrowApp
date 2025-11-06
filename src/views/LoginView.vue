@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute, type LocationQueryValue } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { safePush } from '@/utils/router'
 
@@ -34,27 +34,27 @@ const success = ref(false)
 const loading = ref(false)
 const auth = useAuthStore()
 const router = useRouter()
+const route = useRoute()
+
+function getNextPath(): string | null {
+  const q: LocationQueryValue | LocationQueryValue[] | undefined = route.query.next
+  if (Array.isArray(q)) return q[0] ?? null
+  if (typeof q === 'string') return q
+  return null
+}
+
 
 async function login() {
   resetUi()
   loading.value = true
   try {
-    // 1. Authentifizierung
     await auth.signIn(email.value.trim(), password.value)
     success.value = true
-  } catch (e: any) {
-    // Nur echte Auth-Fehler anzeigen
+    const next = getNextPath()
+    await router.push(next ?? { name: 'home' })
+  } catch (e: unknown) {
     error.value = human(e)
     success.value = false
-    loading.value = false
-    return
-  }
-
-  // 2. Navigation separat behandeln
-  try {
-    await safePush(router, { name: 'Home' })
-  } catch (e) {
-    console.warn('Navigation error:', e)
   } finally {
     loading.value = false
   }
@@ -66,17 +66,11 @@ async function register() {
   try {
     await auth.signUp(email.value.trim(), password.value)
     success.value = true
-  } catch (e: any) {
+    const next = getNextPath()
+    await router.push(next ?? { name: 'home' })
+  } catch (e: unknown) {
     error.value = human(e)
     success.value = false
-    loading.value = false
-    return
-  }
-
-  try {
-    await safePush(router, { name: 'Home' })
-  } catch (e) {
-    console.warn('Navigation error:', e)
   } finally {
     loading.value = false
   }
@@ -88,17 +82,11 @@ async function google() {
   try {
     await auth.signInWithGoogle()
     success.value = true
-  } catch (e: any) {
+    const next = getNextPath()
+    await router.push(next ?? { name: 'home' })
+  } catch (e: unknown) {
     error.value = human(e)
     success.value = false
-    loading.value = false
-    return
-  }
-
-  try {
-    await safePush(router, { name: 'Home' })
-  } catch (e) {
-    console.warn('Navigation fehlgeschlagen:', e)
   } finally {
     loading.value = false
   }
@@ -109,11 +97,12 @@ function resetUi() {
   success.value = false
 }
 
-function human(e: any) {
-  const msg = String(e?.code || e?.message || e)
+function human(e: unknown) {
+  const msg = String((e as any)?.code || (e as any)?.message || e)
   if (msg.includes('auth/invalid-credential')) return 'Falsche Zugangsdaten.'
   if (msg.includes('auth/email-already-in-use')) return 'Email ist bereits registriert.'
   if (msg.includes('auth/weak-password')) return 'Passwort zu schwach.'
+  if (msg.includes('auth/too-many-requests')) return 'Zu viele Versuche. Bitte kurz warten.'
   return 'Anmeldung fehlgeschlagen.'
 }
 </script>
