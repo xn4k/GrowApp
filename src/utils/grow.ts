@@ -1,8 +1,12 @@
+// src/utils/grow.ts
+import { addDays } from 'date-fns'
 
-export function harvestDateISO(startISO: string, vegDays: number, flowerDays: number): string {
-  const start = new Date(startISO)
-  const total = (vegDays || 0) +(flowerDays || 0)
-  const date = new Date(start)
-  date.setDate(date.getDate() + total)
-  return date.toISOString()
+export function harvestDateISO(start: string, veg = 0, flower = 0): string {
+  const total = (veg ?? 0) + (flower ?? 0)
+  const [y, m, d] = start.split('-').map(Number)
+  const end = addDays(new Date(y, (m ?? 1) - 1, d ?? 1), total)
+  const yyyy = end.getFullYear()
+  const mm = String(end.getMonth() + 1).padStart(2, '0')
+  const dd = String(end.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
 }
