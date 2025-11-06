@@ -94,4 +94,4 @@ Dieses Projekt folgt der Struktur von [Keep a Changelog](https://keepachangelog.
 
 ---
 
-> „Jede Zeile Code ist wie ein Blatt – sie wächst, sie stirbt, und manchmal löscht man sie aus Frust.“ 🌿
+> „Jede Zeile Code ist wie ein Blatt – sie wächst, sie stirbt, und manchmal löscht man sie aus Frust...“ 🌿
