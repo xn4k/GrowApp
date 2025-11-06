@@ -1,32 +1,24 @@
 <template>
   <h1>Grow-Planner</h1>
 
-  <div>
-    <p class="text-sm text-neutral-400 mb-1">Meine Freunde</p>
-    <p class="text-sm text-neutral-400 mb-1">Alles, was hier passiert, ist noch ein Test.</p>
-    <p class="text-sm text-neutral-400 mb-1">Ich überlege, einen kleinen Chat oder News-Feed hinzuzufügen.</p>
-    <p class="text-sm text-neutral-400 mb-1">Vielleicht kommt auch eine Social-Wall oder ein Aktivitätslog dazu.</p>
-    <p> ⚠️ Dieses Feature ist nur ein Prototyp. Feedback willkommen – Änderungen jederzeit möglich.</p>
-    <p>Abgesehen davon dass ich das ganze Layout noch zu ende machen werde damit es nicht wie
-    ein Schwanz aussieht. :=) </p>
+  <div class="mb-6 space-y-1">
+    <p class="text-sm text-neutral-400">Meine Freunde</p>
+    <p class="text-sm text-neutral-400">Alles, was hier passiert, ist noch ein Test.</p>
+    <p class="text-sm text-neutral-400">Ich überlege, einen kleinen Chat oder News-Feed hinzuzufügen.</p>
+    <p class="text-sm text-neutral-400">Vielleicht kommt auch eine Social-Wall oder ein Aktivitätslog dazu.</p>
+    <p>⚠️ Prototyp. Feedback willkommen – Änderungen jederzeit möglich.</p>
   </div>
 
-
-  <div>
-    <!-- Small GIF to emphasize "work in progress" -->
+  <div class="max-w-xl mx-auto mb-8">
     <img
       src="https://miro.medium.com/0*asGn9Td3i3o0zQKV"
       alt="Work in progress"
-      class="rounded-lg w-1/3 mx-auto mb-4 opacity-90"
-      style="width:290px; height:auto; display:block; opacity:0.9"
-
+      class="block mx-auto w-1/2 max-w-xs rounded-lg opacity-90"
     />
-  <p>Test Rechte Seite</p>
-    <p>rechte seite1</p>
-    <p>rechte seite2</p>
-    <p>rechte seite3</p>
-    <p>rechte seite4</p>
+    <div class="mt-2 text-sm text-neutral-400 text-center">Test rechte Seite</div>
   </div>
+
+  <!-- Formular -->
   <form
     @submit.prevent="addGrow"
     class="grid gap-3 max-w-md bg-neutral-900/40 border border-neutral-700 rounded-xl p-5"
@@ -96,10 +88,10 @@
       </select>
     </div>
 
-
     <!-- Erntedatum -->
     <p class="text-sm text-neutral-400">
-      Voraussichtliches Erntedatum: <strong class="text-neutral-200">{{ harvest }}</strong>
+      Voraussichtliches Erntedatum:
+      <strong class="text-neutral-200">{{ harvest }}</strong>
     </p>
 
     <!-- Button -->
@@ -117,93 +109,105 @@
       <p class="text-sm text-neutral-400">Aktiv: {{ store.grows.filter(g => g.status === 'running').length }}</p>
       <p class="text-sm text-neutral-400">Abgeschlossen: {{ store.grows.filter(g => g.status === 'harvested').length }}</p>
     </div>
-
-
   </form>
 
-
-
-  <ul style="display:grid;gap:.5rem;padding-left:0;list-style:none;">
-    <li
-      v-for="g in store.grows"
-      :key="g.id"
-      style="border:1px solid #ddd;padding:.5rem;border-radius:.5rem;"
-    >
-      <div class="flex items-start justify-between gap-4">
+  <!-- Liste -->
+  <ul class="grid gap-2 pl-0 list-none mt-6">
+    <li v-for="g in store.grows" :key="g.id" class="border rounded p-3">
+      <div class="flex items-start gap-4">
         <div class="flex-1 min-w-0">
           <div class="font-semibold">{{ g.name }}</div>
           <div class="text-xs opacity-75 truncate">
             Start: {{ g.startDate.slice(0,10) }} · Veg: {{ g.vegDays }} · Flower: {{ g.flowerDays }} ·
-            Harvest: {{ computeHarvest(g.startDate, g.vegDays, g.flowerDays).slice(0,10) }}
+            Harvest: {{ computeHarvest(g.startDate, g.vegDays, g.flowerDays) }}
           </div>
+
+          <label class="block text-sm font-medium mt-2">Notizen</label>
+          <textarea
+            v-model="g.notes"
+            rows="3"
+            placeholder="Geruch, Stretch, EC/PH, Auffälligkeiten..."
+            class="w-full rounded border p-2"
+            @blur="onBlurNotes(g)"
+          />
         </div>
+
         <div class="flex items-center gap-2 shrink-0">
           <span class="text-xs px-2 py-0.5 rounded-full border">{{ g.status }}</span>
-          <select :value="g.status" @change="onChangeStatus(g.id, ($event.target as HTMLSelectElement).value)" class="text-xs max-w-[140px]">
+          <select
+            :value="g.status"
+            @change="onChangeStatus(g.id, ($event.target as HTMLSelectElement).value)"
+            class="text-xs max-w-[140px]"
+          >
             <option value="planned">planned</option>
             <option value="running">running</option>
             <option value="harvested">harvested</option>
             <option value="aborted">aborted</option>
           </select>
-          <button type="button" @click="store.remove(g.id)" class="text-red-400 text-xs hover:underline">Löschen</button>
+          <button type="button" @click="store.remove(g.id)" class="text-red-500 text-xs hover:underline">
+            Löschen
+          </button>
         </div>
       </div>
     </li>
   </ul>
-
-
-
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
-
 import { ref, computed, onMounted } from 'vue'
-import { useGrowsStore, type GrowStatus } from '@/stores/grows'
+import { useAuthStore } from '@/stores/auth'
+import { useGrowsStore, type GrowStatus, type Grow } from '@/stores/grows'
 import { harvestDateISO } from '@/utils/grow'
 
-
 const auth = useAuthStore()
-
 const store = useGrowsStore()
 
+// Formular-States
 const name   = ref('')
-const start  = ref<string>(new Date().toISOString().slice(0,10))
+const start  = ref<string>(new Date().toISOString().slice(0,10)) // YYYY-MM-DD
 const veg    = ref<number>(0)
 const flower = ref<number>(0)
 const status = ref<GrowStatus>('planned')
 
 onMounted(async () => {
-  // eingeloggt? sonst zur Login-Page (falls Route nicht schon geschützt ist)
   if (!auth.user) return
   await store.load()
-  // optional: Sobald du das einmal gemacht hast, kann’s raus.
-  // await store.migrateLocalToCloud()
 })
 
-const harvest = computed(() =>
-  harvestDateISO(new Date(start.value).toISOString(), veg.value, flower.value).slice(0,10)
-)
+// Erntedatum aus Formular-Inputs (robust, kein toISOString-Shift)
+const harvest = computed(() => {
+  if (!start.value) return '—'
+  const d = harvestDateISO(start.value, veg.value, flower.value)
+  return d ?? '—'
+})
 
-function addGrow() {
-  store.add({
+async function addGrow() {
+  if (!name.value.trim() || !start.value) return
+  await store.add({
     name: name.value.trim(),
-    startDate: new Date(start.value).toISOString(),
+    startDate: start.value,                // direkt YYYY-MM-DD speichern
     vegDays: Number(veg.value) || 0,
     flowerDays: Number(flower.value) || 0,
     status: status.value,
+    notes: '',
   })
+  // Formular zurücksetzen
   name.value = ''
   veg.value = 0
   flower.value = 0
   status.value = 'planned'
 }
 
-function onChangeStatus(id: string, value: string) {
-  store.updateStatus(id, value as GrowStatus)
+async function onBlurNotes(g: Grow) {
+  const notes = (g.notes ?? '').trim()
+  await store.updateNotes(g.id, notes)     // <- richtige Action
+}
+
+async function onChangeStatus(id: string, value: string) {
+  await store.updateStatus(id, value as GrowStatus)
 }
 
 function computeHarvest(startISO: string, vegDays: number, flowerDays: number) {
-  return harvestDateISO(startISO, vegDays, flowerDays)
+  return harvestDateISO(startISO, vegDays, flowerDays) ?? '—'
 }
 </script>
