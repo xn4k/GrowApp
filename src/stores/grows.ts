@@ -34,6 +34,22 @@ export const useGrowsStore = defineStore('grows', {
       if (!uid) throw new Error('not-authenticated')
       return collection(db, 'users', uid, 'grows')
     },
+    async updateStatus(id: string, status: GrowStatus) {
+      await this.updatePatch(id, { status })
+    },
+
+    async updateNotes(id: string, notes: string) {
+      await this.updatePatch(id, { notes })
+    },
+    async remove(id: string) {              // legacy Name
+      const ref = doc(this.colRef(), id)
+      await deleteDoc(ref)
+      this.grows = this.grows.filter(x => x.id !== id)
+    },
+
+    async deleteGrow(id: string) {          // neuer, klarer Name
+      return this.remove(id)
+    },
 
     async load() {
       this.loading = true
@@ -62,23 +78,12 @@ export const useGrowsStore = defineStore('grows', {
       await updateDoc(ref, patch as any)
 
       const i = this.grows.findIndex(x => x.id === id)
-      if (i >= 0) {
-        Object.assign(this.grows[i], patch)  // kein Reassign → TS bleibt ruhig
-      }
-    },
+      if (i === -1) return
 
-    async updateStatus(id: string, status: GrowStatus) {
-      await this.updatePatch(id, { status })
-    },
+      const current = this.grows[i]
+      if (!current) return
 
-    async updateNotes(id: string, notes: string) {
-      await this.updatePatch(id, { notes })
-    },
-
-    async remove(id: string) {
-      const ref = doc(this.colRef(), id)
-      await deleteDoc(ref)
-      this.grows = this.grows.filter(x => x.id !== id)
-    },
+      Object.assign(current, patch) // jetzt ist target garantiert ein Objekt
+    }
   },
 })
