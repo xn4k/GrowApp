@@ -1,72 +1,72 @@
-# GrowApp
-grow planer
-📘 Projekt: Grow-Planner
-Vue 3 + Vite + Pinia + Firebase Firestore
-🧭 Übersicht
+# 🌱 Grow-Planner
 
-Grow-Planner ist eine kleine Web-Applikation, mit der Nutzer ihre Cannabis- (oder andere Pflanzen-) Grows organisieren können.
-Ziel ist es, jeden Grow mit Basisdaten (Startdatum, Vegetations- und Blütephase, Notizen, Status) zu verwalten,
-das voraussichtliche Erntedatum automatisch zu berechnen und alle Einträge sicher im eigenen Firestore-Account zu speichern.
+Ein minimalistischer **Grow-Manager** für deine Pflanzen — entwickelt mit **Vue 3**, **Vite**, **Pinia** und **Firebase Firestore**.  
+Tracke jeden Grow mit Startdatum, Phasenlängen, Status und Notizen.  
+Das Tool berechnet automatisch das voraussichtliche Erntedatum und speichert alles sicher in deiner Cloud.
 
-Die App wurde mit Vue 3 (Composition API) und Vite entwickelt und nutzt Firebase Authentication & Firestore für Nutzer-Login und Datenspeicherung.
+---
 
-⚙️ Features
+## 🚀 Features
 
-🔐 Login/Registrierung (Firebase Auth)
-E-Mail/Passwort + Google-Sign-In
+- 🔐 **Login & Registrierung** über Firebase Auth (E-Mail / Passwort + Google Sign-In)
+- 🌿 **Grow-Management**: Name, Startdatum, Veg- und Blütephase, Status, Notizen
+- 📅 **Automatische Ernte-Berechnung** (über `date-fns`)
+- 💾 **Persistente Speicherung** in Firestore  
+  → pro Benutzer ein eigener Datensatz: `/users/{uid}/grows`
+- 📝 **Notizfeld** mit Auto-Save oder optionalem Speichern-Button
+- 📊 **Statistik-Sektion**: Gesamt, aktiv, geerntet
+- ☁️ **Lokale Migration**: alte LocalStorage-Daten können übernommen werden
+- 🔮 **Erweiterbar**: Public Feed, Activity-Log, Chat (geplant)
 
-🌱 Grow-Verwaltung
-Name, Startdatum, Veg- und Blütephase, Status, Notizen
+---
 
-📅 Automatische Ernte-Berechnung
-Datum wird live per date-fns berechnet
+## 🧠 Tech Stack
 
-💾 Datenpersistenz über Firestore
-Jede Nutzerin sieht nur ihre eigenen Grows (Daten unter /users/{uid}/grows)
+| Kategorie | Technologie |
+|------------|-------------|
+| Frontend | Vue 3 (Composition API), Vite |
+| State | Pinia |
+| Backend | Firebase Auth & Firestore |
+| UI | TailwindCSS |
+| Utils | date-fns |
+| Sprache | TypeScript |
 
-📝 Notizfeld mit Auto-Save oder Speichern-Button
-Praktisch für Beobachtungen während des Grows
+---
 
-📊 Statistik-Sektion
-Gesamtanzahl, aktive Grows, abgeschlossene Grows
+## 🏗️ Projektstruktur
 
-🔄 Lokale Migration (optional)
-Ältere LocalStorage-Daten können mit migrateLocalToCloud() importiert werden.
-
-🚀 Prototyp-Erweiterungen (in Planung):
-
-Öffentlicher Feed (globaler Firestore-Channel /publicFeed)
-
-Chat/Activity-Log
-
-Social Features
-
-🏗️ Projektstruktur
 growapp/
 ├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── views/
-│   │   ├── LoginView.vue
-│   │   ├── PlannerView.vue   ← Hauptansicht (Form + Liste)
-│   │   └── PublicFeed.vue    ← optionaler globaler Feed
-│   ├── stores/
-│   │   ├── auth.ts           ← Firebase-Login + Session
-│   │   └── grows.ts          ← Firestore CRUD + State
-│   ├── lib/
-│   │   └── firebase.ts       ← Firebase init
-│   ├── utils/
-│   │   └── grow.ts           ← harvestDateISO()
-│   ├── router/
-│   │   └── index.ts
-│   ├── App.vue
-│   └── main.ts
+│ ├── assets/
+│ ├── components/
+│ ├── views/
+│ │ ├── LoginView.vue
+│ │ ├── PlannerView.vue ← Hauptansicht (Form + Liste)
+│ │ └── PublicFeed.vue ← optionaler globaler Feed
+│ ├── stores/
+│ │ ├── auth.ts ← Firebase-Login + Session
+│ │ └── grows.ts ← Firestore-CRUD + State
+│ ├── lib/
+│ │ └── firebase.ts ← Firebase-Initialisierung
+│ ├── utils/
+│ │ └── grow.ts ← harvestDateISO()
+│ ├── router/
+│ │ └── index.ts
+│ ├── App.vue
+│ └── main.ts
 ├── index.html
 ├── package.json
 ├── README.md
 └── vite.config.ts
 
-🔧 Installation
+
+```
+
+---
+
+## ⚙️ Installation & Setup
+
+```bash
 # Repository klonen
 git clone https://github.com/<dein-user>/grow-planner.git
 cd grow-planner
@@ -74,24 +74,28 @@ cd grow-planner
 # Abhängigkeiten installieren
 npm install
 
-# Firebase config anpassen (src/lib/firebase.ts)
-#  -> .env Datei mit deinen Firebase-Keys
-
 # Dev-Server starten
 npm run dev
 
 # Build für Deployment
 npm run build
 
-🔥 Firebase Setup
+```
+Firebase-Setup
 
 Firebase Console
  öffnen
 
-Neues Projekt anlegen → Firestore & Authentication aktivieren
+Neues Projekt anlegen
 
-Im Code (firebase.ts) deine Konfiguration einsetzen:
+Authentication aktivieren (E-Mail/Passwort + Google)
 
+Firestore Database aktivieren
+
+Konfiguration in src/lib/firebase.ts eintragen:
+
+Passe deine Konfiguration in src/lib/firebase.ts an und setze korrekte Firestore-Regeln.
+```
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -101,15 +105,16 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-
-Firestore-Regeln:
-
+```
+Firestore-Regeln festlegen:
+```
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{uid}/grows/{growId} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
+
     match /publicFeed/{postId} {
       allow read: if true;
       allow create: if request.auth != null
@@ -120,86 +125,10 @@ service cloud.firestore {
   }
 }
 
-💡 Technische Highlights
+```
 
-Pinia Store: zentrale Stateverwaltung (keine Props-Ketten)
 
-TypeScript: volle Typisierung von Grow, GrowPatch, GrowStatus
 
-FireStoreDataConverter ursprünglich getestet, später durch direkte Mappings ersetzt
-
-date-fns: kleine, schnelle Utility-Lib für Datum-Arithmetik
-
-TailwindCSS: kompakter Utility-First-Style
-
-📄 Beispielcode: useGrowsStore
-async updatePatch(id: string, patch: GrowPatch) {
-  const ref = doc(this.colRef(), id)
-  await updateDoc(ref, patch as any)
-
-  const i = this.grows.findIndex(x => x.id === id)
-  if (i >= 0) Object.assign(this.grows[i], patch)
-}
-
-async updateNotes(id: string, notes: string) {
-  await this.updatePatch(id, { notes })
-}
-
-async updateStatus(id: string, status: GrowStatus) {
-  await this.updatePatch(id, { status })
-}
-
-💬 Beispielcode: harvestDateISO
-import { addDays } from 'date-fns'
-
-export function harvestDateISO(start: string, veg?: number, flower?: number): string {
-  const total = (veg ?? 0) + (flower ?? 0)
-  const [y, m, d] = start.split('-').map(Number)
-  const s = new Date(y, m - 1, d)
-  const e = addDays(s, total)
-  return `${e.getFullYear()}-${String(e.getMonth()+1).padStart(2,'0')}-${String(e.getDate()).padStart(2,'0')}`
-}
-
-🚧 Bekannte Probleme / TODO
-
-Kein Offline-Support (Firebase offline caching fehlt)
-
-Keine Bild-Uploads (nur Textnotizen)
-
-Layout ist derzeit minimalistisch (Tailwind: neutral-900-Theme)
-
-PublicFeed-Feature ist prototypisch, nicht moderiert
-
-Noch keine „Edit“-Dialoge für bestehende Grows
-
-🧾 Lizenz
-
-MIT License
-(c) 2025 Mikhail Zhivoderov
-
-📚 README.md (kompakt für Repo)
-# Grow-Planner 🌱
-
-Ein minimalistischer Grow-Manager in Vue 3 + Firebase.  
-Erlaubt es, Grows anzulegen, zu tracken und automatisch das Erntedatum zu berechnen.
-
-## Features
-- Login via Firebase
-- Grows mit Notizen & Status
-- Automatische Ernteberechnung
-- Statistikübersicht
-
-## Tech Stack
-Vue 3 (Vite, Pinia, TypeScript), Firebase Auth + Firestore, TailwindCSS, date-fns
-
-## Setup
-```bash
-npm install
-npm run dev
-
-Firebase
-
-Passe deine Konfiguration in src/lib/firebase.ts an und setze korrekte Firestore-Regeln.
 
 Lizenz
 
