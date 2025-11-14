@@ -66,7 +66,8 @@ export const useChatStore = defineStore('chat', {
       await addDoc(colRef, {
         text: trimmed,
         userId: auth.user.uid,
-        userName: auth.user.displayName ?? auth.user.email ?? 'Anon',
+        // userName: auth.user.displayName ?? auth.user.email ?? 'Anon', wenn gewünscht
+        userName: auth.user.email,
         createdAt: serverTimestamp(),
       })
     },
