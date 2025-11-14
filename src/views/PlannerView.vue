@@ -8,6 +8,7 @@
     <p class="text-sm text-neutral-400">Vielleicht kommt auch eine Social-Wall oder ein Aktivitätslog dazu.</p>
     <p>⚠️ Prototyp. Feedback willkommen – Änderungen jederzeit möglich.</p>
   </div>
+  <GlobalChatFeed class="max-w-xl mx-auto" />
 
   <div class="max-w-xl mx-auto mb-8">
     <img
@@ -158,6 +159,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useGrowsStore, type GrowStatus, type Grow } from '@/stores/grows'
 import { harvestDateISO } from '@/utils/grow'
+import GlobalChatFeed from '@/components/GlobalChatFeed.vue'
+
 
 const auth = useAuthStore()
 const store = useGrowsStore()
