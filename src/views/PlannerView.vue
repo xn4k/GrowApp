@@ -5,6 +5,7 @@
     <p class="text-sm text-neutral-400">Meine Freunde</p>
     <p class="text-sm text-neutral-400">Alles, was hier passiert, ist noch ein Test.</p>
     <p class="text-sm text-neutral-400">Ich überlege, einen kleinen Chat oder News-Feed hinzuzufügen.</p>
+    <p class="text-sm text-neutral-400">Chat - Done ;) Muss nur einiges dran fixen</p>
     <p class="text-sm text-neutral-400">Vielleicht kommt auch eine Social-Wall oder ein Aktivitätslog dazu.</p>
     <p>⚠️ Prototyp. Feedback willkommen – Änderungen jederzeit möglich.</p>
   </div>
